@@ -1,35 +1,43 @@
+import { useState } from "react";
 import "./Sale.css";
-import { Typography, Select, InputNumber } from "antd";
+import { Typography, Select, InputNumber, Alert } from "antd";
 import MedicineTable from "../../components/medicineTable/MedicineTable";
-
+import { MedicineInfo } from "../../utils/constants/medicineInfo";
 const { Option } = Select;
 
-function onChange(value) {
-  console.log(`selected ${value}`);
-}
-
-function onSearch(val) {
-  console.log("search:", val);
-}
-
-const data = [
-  {
-    title: "Ant Design Title 1",
-  },
-  {
-    title: "Ant Design Title 2",
-  },
-  {
-    title: "Ant Design Title 3",
-  },
-  {
-    title: "Ant Design Title 4",
-  },
-];
+const CalculateTotal = (valueArray) => {
+  console.log(valueArray);
+};
 
 const { Title } = Typography;
 
 const Sale = () => {
+  const [Medicine, setMedicine] = useState(null);
+  const [SaleMedicines, setSaleMedicines] = useState([]);
+  const [selectedMedicineQuantity, setSelectedMedicineQuantity] = useState(0);
+
+  const onMedicineSelected = (value) => {
+    const res = value.split("-R");
+    const medicine = res[0];
+    const selectedMedicinePrice = res[1];
+    setMedicine({
+      name: medicine,
+      packPrice: selectedMedicinePrice,
+    });
+  };
+  function QuantityChange(value) {
+    if (Medicine == {} || Medicine == null || Medicine == undefined) {
+      return;
+    }
+    const toAdd = MedicineInfo.filter(
+      (c) => c.name == Medicine.name && c.packPrice == Medicine.packPrice
+    )[0];
+    toAdd.quantity = selectedMedicineQuantity;
+    setSaleMedicines((prev) => [...prev, toAdd]);
+  }
+
+  console.log(SaleMedicines);
+
   return (
     <div
       className="sale-container"
@@ -67,53 +75,26 @@ const Sale = () => {
             showSearch
             placeholder="Medicine"
             optionFilterProp="children"
-            onChange={onChange}
-            onSearch={onSearch}
+            onChange={onMedicineSelected}
             filterOption={(input, option) => {
               return (
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               );
             }}
           >
-            <Option value="jack">jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="tom">Tom</Option>
-          </Select>
-        </div>
-        <div
-          className="search-quantity-selector-batch"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <p
-            style={{
-              marginBottom: "0",
-              marginRight: "10px",
-            }}
-          >
-            Batch:
-          </p>
-          <Select
-            style={{ width: 400 }}
-            showSearch
-            placeholder="Medicine"
-            optionFilterProp="children"
-            onChange={onChange}
-            onSearch={onSearch}
-            filterOption={(input, option) => {
+            {MedicineInfo?.map((medicine) => {
               return (
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                <Option
+                  value={medicine.name + "-R" + medicine.packPrice}
+                  key={medicine.id}
+                >
+                  {medicine.name + "-R" + medicine.packPrice}
+                </Option>
               );
-            }}
-          >
-            <Option value="jack">jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="tom">Tom</Option>
+            })}
           </Select>
         </div>
+
         <div
           className="search-quantity-selector"
           style={{
@@ -132,16 +113,20 @@ const Sale = () => {
           </p>
           <InputNumber
             min={1}
-            max={100}
-            defaultValue={1}
-            onChange={onChange}
+            max={10000}
+            value={selectedMedicineQuantity}
+            onChange={(value) => setSelectedMedicineQuantity(value)}
+            onBlur={QuantityChange}
             style={{ width: 80 }}
           />
         </div>
       </div>
       <div className="medicine-info-table" style={{ display: "flex" }}>
         <div className="medicine-info-table-left" style={{ width: "85%" }}>
-          <MedicineTable />
+          <MedicineTable
+            CalculateTotal={(value) => CalculateTotal(value)}
+            SaleMedicines={SaleMedicines}
+          />
         </div>
         <div
           className="medicine-info-table-right"
@@ -150,6 +135,7 @@ const Sale = () => {
             position: "fixed",
             right: "0",
             marginTop: "50px",
+            textAlign: "center",
           }}
         >
           <Title>Total</Title>
