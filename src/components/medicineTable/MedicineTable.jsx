@@ -22,7 +22,6 @@ const MedicineTable = ({ CalculateTotal, SaleMedicines, deleteFromSale }) => {
     deleteFromSale(medicine);
   };
   useEffect(() => {
-    console.log("Here maptotal changed");
     CalculateTotal(mapTotal);
   }, [mapTotal]);
   const getAllTotal = (id, name, itemTotalPirce) => {

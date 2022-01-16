@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./Sale.css";
-import { Typography, Select, InputNumber, Alert } from "antd";
+import { Typography, Select, InputNumber } from "antd";
 import MedicineTable from "../../components/medicineTable/MedicineTable";
 import { MedicineInfo } from "../../utils/constants/medicineInfo";
 const { Option } = Select;
@@ -84,8 +84,9 @@ const Sale = () => {
             Name
           </p>
           <Select
-            style={{ width: 400 }}
+            style={{ width: 400, maxHeight: "30vh", overflowY: "auto" }}
             showSearch
+            autoFocus
             placeholder="Medicine"
             optionFilterProp="children"
             onChange={onMedicineSelected}
