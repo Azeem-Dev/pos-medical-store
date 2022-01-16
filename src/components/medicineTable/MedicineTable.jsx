@@ -1,43 +1,68 @@
 import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { InputNumber, Select, Button, Tooltip } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import "./MedicineTable.css";
 const { Option } = Select;
-const MedicineTable = ({ CalculateTotal, SaleMedicines }) => {
+const MedicineTable = ({ CalculateTotal, SaleMedicines, deleteFromSale }) => {
   const [medicines, setMedicines] = useState();
   const [mapTotal, setMapTotal] = useState([]);
   useEffect(() => {
     setMedicines(SaleMedicines);
   }, [SaleMedicines]);
-
   const deleteMedicineFromTable = (medicine) => {
+    
+    var newArray = mapTotal.filter(
+      (c) => c.id != medicine.id && c.name != medicine.name
+    );
+    setMapTotal(newArray);
     setMedicines(
       medicines.filter((c) => c.name != medicine.name && c.id != medicine.id)
     );
+    deleteFromSale(medicine);
   };
-  console.log(mapTotal);
+  useEffect(() => {
+    console.log("Here maptotal changed");
+    CalculateTotal(mapTotal);
+  }, [mapTotal]);
+  const getAllTotal = (id, name, itemTotalPirce) => {
+    const prevArray = mapTotal;
+    const prevItem = mapTotal.filter((c) => c.id == id)[0];
+    if (prevItem != undefined || prevItem != null) {
+      prevItem.itemTotalPirce = itemTotalPirce;
+      prevArray[prevArray.indexOf(prevItem)] = prevItem;
+      setMapTotal(prevArray);
+      CalculateTotal(prevArray);
+    } else {
+      var newItem = [];
+      setMapTotal((prev) => {
+        newItem = [
+          ...prev,
+          {
+            id,
+            name,
+            itemTotalPirce,
+          },
+        ];
+        return newItem;
+      });
+      CalculateTotal(newItem);
+    }
+  };
   return (
     <div className="table">
       <TableHeader />
       <div className="table-content">
-        {medicines?.map((row) => (
-          <TableRow
-            medicine={row}
-            key={row.id}
-            deleteMedicineFromTable={deleteMedicineFromTable}
-            getAllTotal={(id, name, itemTotalPirce) => {
-              console.log(id, name, itemTotalPirce);
-              setMapTotal((prev) => [
-                ...prev,
-                {
-                  id,
-                  name,
-                  itemTotalPirce,
-                },
-              ]);
-            }}
-          />
-        ))}
+        {medicines?.map((row) => {
+          return (
+            <TableRow
+              medicine={row}
+              key={row.id}
+              deleteMedicineFromTable={deleteMedicineFromTable}
+              getAllTotal={getAllTotal}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -90,9 +115,14 @@ const TableRow = ({ medicine, deleteMedicineFromTable, getAllTotal }) => {
   const [price, setPrice] = useState(parseFloat(medicine?.packPrice));
   const [quantity, setQuantity] = useState(parseInt(medicine?.quantity));
   const [discount, setDiscount] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(
-    parseFloat(medicine?.packPrice) * parseInt(medicine?.quantity) - discount
-  );
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    setTotalPrice(price * quantity - discount);
+  }, [price, quantity]);
+  useEffect(() => {
+    getAllTotal(medicine.id, medicine.name, totalPrice);
+  }, [totalPrice]);
 
   const onUnitChange = (value) => {
     setUnit(value);
@@ -113,10 +143,6 @@ const TableRow = ({ medicine, deleteMedicineFromTable, getAllTotal }) => {
   const onDiscountChange = (value) => {
     setTotalPrice(price * quantity - discount);
   };
-
-  useEffect(() => {
-    getAllTotal(medicine.id, medicine.name, totalPrice);
-  }, [totalPrice]);
 
   return (
     <div className="table-row">
@@ -160,7 +186,10 @@ const TableRow = ({ medicine, deleteMedicineFromTable, getAllTotal }) => {
             type="danger"
             shape="circle"
             icon={<DeleteOutlined />}
-            onClick={() => deleteMedicineFromTable(medicine)}
+            onClick={() => {
+              medicine.itemTotalPirce = totalPrice;
+              deleteMedicineFromTable(medicine);
+            }}
           />
         </Tooltip>
       </div>

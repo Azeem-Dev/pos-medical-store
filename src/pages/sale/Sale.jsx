@@ -1,13 +1,10 @@
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./Sale.css";
 import { Typography, Select, InputNumber, Alert } from "antd";
 import MedicineTable from "../../components/medicineTable/MedicineTable";
 import { MedicineInfo } from "../../utils/constants/medicineInfo";
 const { Option } = Select;
-
-const CalculateTotal = (valueArray) => {
-  console.log(valueArray);
-};
 
 const { Title } = Typography;
 
@@ -15,11 +12,21 @@ const Sale = () => {
   const [Medicine, setMedicine] = useState(null);
   const [SaleMedicines, setSaleMedicines] = useState([]);
   const [selectedMedicineQuantity, setSelectedMedicineQuantity] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const CalculateTotal = (valueArray) => {
+    var totalCalc = 0;
+    valueArray?.map((item) => {
+      totalCalc += item.itemTotalPirce;
+    });
+    setTotal(totalCalc);
+  };
 
   const onMedicineSelected = (value) => {
     const res = value.split("-R");
     const medicine = res[0];
     const selectedMedicinePrice = res[1];
+    const key = uuidv4();
     setMedicine({
       name: medicine,
       packPrice: selectedMedicinePrice,
@@ -36,7 +43,13 @@ const Sale = () => {
     setSaleMedicines((prev) => [...prev, toAdd]);
   }
 
-  console.log(SaleMedicines);
+  const deleteFromSale = (medicine) => {
+    setSaleMedicines(
+      SaleMedicines.filter(
+        (c) => c.name != medicine.name && c.id != medicine.id
+      )
+    );
+  };
 
   return (
     <div
@@ -126,6 +139,7 @@ const Sale = () => {
           <MedicineTable
             CalculateTotal={(value) => CalculateTotal(value)}
             SaleMedicines={SaleMedicines}
+            deleteFromSale={deleteFromSale}
           />
         </div>
         <div
@@ -138,7 +152,13 @@ const Sale = () => {
             textAlign: "center",
           }}
         >
-          <Title>Total</Title>
+          <Title style={{ textDecoration: "underline" }}>Total</Title>
+          <Title
+            level={3}
+            style={{ backgroundColor: "#f9f9f9", padding: "20px" }}
+          >
+            {total}
+          </Title>
         </div>
       </div>
     </div>
