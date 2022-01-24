@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Menu, Dropdown } from "antd";
 import { DownOutlined, DollarOutlined } from "@ant-design/icons";
 import "./Navbar.css";
@@ -11,23 +12,26 @@ const Navbar = () => {
             <span></span>
             <span></span>
           </button>
-          <a href="/">
+          <Link to="/">
             <h4>
               Afnan<span> Medical Store</span>
             </h4>
-          </a>
+          </Link>
         </div>
 
         <div className="navbar-menu" id="open-navbar1">
           <ul className="navbar-nav">
             <li className="active">
-              <a href="/">Sale</a>
+              <Link to="/">Sale</Link>
             </li>
             <li>
-              <a href="/login">Purchase</a>
+              <Link to="/purchase">Purchase</Link>
             </li>
             <li>
-              <a href="/register">Add Product</a>
+              <Link to="/add-product">Add Product</Link>
+            </li>
+            <li>
+              <Link to="/add-supplier">Add Supplier</Link>
             </li>
             <li>
               <Dropdown overlay={menu}>
@@ -96,7 +100,9 @@ const menu = (
         Yearly Sales
       </a>
     </Menu.Item>
-    <Menu.Item danger key="test">a danger item</Menu.Item>
+    <Menu.Item danger key="test">
+      a danger item
+    </Menu.Item>
   </Menu>
 );
 

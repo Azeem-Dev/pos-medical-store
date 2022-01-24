@@ -4,6 +4,7 @@ import "./Sale.css";
 import { Typography, Select, InputNumber } from "antd";
 import MedicineTable from "../../components/medicineTable/MedicineTable";
 import { MedicineInfo } from "../../utils/constants/medicineInfo";
+
 const { Option } = Select;
 
 const { Title } = Typography;
