@@ -4,6 +4,7 @@ import Navbar from "./components/navbar/Navbar";
 import Sale from "./pages/sale/Sale";
 import Purchase from "./pages/purchase/Purchase";
 import Product from "./pages/product/Product";
+import Supplier from "./pages/supplier/Supplier";
 
 function App() {
   return <Layout />;
@@ -18,7 +19,7 @@ const Layout = () => {
           <Route path="/" element={<Sale />} />
           <Route path="/purchase" element={<Purchase />} />
           <Route path="/add-product" element={<Product />} />
-          <Route path="/add-supplier" element={<Product />} />
+          <Route path="/add-supplier" element={<Supplier />} />
         </Routes>
       </BrowserRouter>
     </>

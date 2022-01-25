@@ -95,7 +95,7 @@ const Purchase = () => {
           <label>Quantity</label>
           <InputNumber
             min={1}
-            max={10}
+            max={1000000}
             defaultValue={1}
             //   onChange={onChange}
             placeholder="Quantity"
