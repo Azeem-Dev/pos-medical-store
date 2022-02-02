@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./Sale.css";
-import { Typography, Select, InputNumber } from "antd";
+import { Typography, Select, InputNumber, Button, Tooltip } from "antd";
+import { SaveOutlined, DollarOutlined } from "@ant-design/icons";
 import MedicineTable from "../../components/medicineTable/MedicineTable";
 import { MedicineInfo } from "../../utils/constants/medicineInfo";
 
@@ -162,6 +163,35 @@ const Sale = () => {
             {total}
           </Title>
         </div>
+      </div>
+      <div
+        className="btn-container"
+        style={{
+          display: "flex",
+          position: "fixed",
+          bottom: "30px",
+          right: "50%",
+          alignItems: "center",
+        }}
+      >
+        <Tooltip title="Save the above sale">
+          <Button type="primary" icon={<SaveOutlined />} size="large">
+            Save
+          </Button>
+        </Tooltip>
+        <Tooltip title="New Sale, Will delete all entries">
+          <Button
+            type="primary"
+            danger
+            icon={<DollarOutlined />}
+            size="large"
+            onClick={() => {
+              window.location.reload(false);
+            }}
+          >
+            New Sale
+          </Button>
+        </Tooltip>
       </div>
     </div>
   );
