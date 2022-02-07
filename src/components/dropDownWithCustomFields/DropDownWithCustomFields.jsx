@@ -1,11 +1,21 @@
+import { useState, useEffect } from "react";
 import { Typography, Input, Select, Divider } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
-const DropDownWithCustomFields = ({ handleChange,Options }) => {
+const DropDownWithCustomFields = ({
+  handleChange,
+  Options,
+  AddNewType,
+  selectedType,
+}) => {
+  const [newType, setNewType] = useState("");
   return (
     <Select
-      defaultValue="lucy"
+      placeholder="Medicine Type"
       style={{ width: "100%" }}
-      onChange={handleChange}
+      value={selectedType}
+      onChange={(val) => {
+        handleChange(val);
+      }}
       dropdownRender={(menu) => (
         <div>
           {menu}
@@ -13,8 +23,8 @@ const DropDownWithCustomFields = ({ handleChange,Options }) => {
           <div style={{ display: "flex", flexWrap: "nowrap", padding: 8 }}>
             <Input
               style={{ flex: "auto" }}
-              // value={name}
-              // onChange={this.onNameChange}
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
             />
             <a
               style={{
@@ -23,7 +33,7 @@ const DropDownWithCustomFields = ({ handleChange,Options }) => {
                 display: "block",
                 cursor: "pointer",
               }}
-              // onClick={this.addItem}
+              onClick={() => AddNewType(newType)}
             >
               <PlusCircleFilled /> Add
             </a>
@@ -33,7 +43,7 @@ const DropDownWithCustomFields = ({ handleChange,Options }) => {
     >
       {Options.map((type) => (
         <Select.Option value={type.id} key={type.id}>
-          {type.Name}
+          {type.typeName}
         </Select.Option>
       ))}
     </Select>

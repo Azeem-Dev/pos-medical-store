@@ -1,15 +1,43 @@
-import { Typography, Input, Select, InputNumber } from "antd";
+import { useEffect, useState } from "react";
+import { Typography, Input, InputNumber } from "antd";
 import Barcode from "react-barcode";
-import { Types } from "../../utils/constants/types";
 import "./Product.css";
 import Division from "../../components/division/LeftRightDivider";
 import DropDownWithCustomFields from "../../components/dropDownWithCustomFields/DropDownWithCustomFields";
+import { getUtil, postUtil } from "../../utils/api/pharmacy-pos.api";
 const { Title } = Typography;
-const { Option } = Select;
 const Product = () => {
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
+  const [Types, setTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState("");
+
+  useEffect(() => {
+    console.log(selectedType);
+  }, [selectedType]);
+
+  const handleChange = (value) => {
+    setSelectedType(value);
+  };
+
+  const GetAllTypes = async () => {
+    var res = await getUtil("ProductType/GetAllTypes");
+    console.log(res.data);
+    if (res?.data) {
+      setTypes(res?.data);
+    }
+  };
+
+  const AddNewType = (value) => {
+    (async () => {
+      var res = await postUtil("ProductType/AddProductType", {
+        typeName: value,
+      });
+      await GetAllTypes();
+    })();
+  };
+  useEffect(() => {
+    console.log("re render");
+    (async () => await GetAllTypes())();
+  }, []);
 
   return (
     <div style={{ margin: "0 20px 0 20px" }}>
@@ -25,7 +53,9 @@ const Product = () => {
             RightElement={() => (
               <DropDownWithCustomFields
                 handleChange={handleChange}
+                AddNewType={AddNewType}
                 Options={Types}
+                selectedType={selectedType}
               />
             )}
           />
